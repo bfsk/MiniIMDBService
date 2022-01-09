@@ -11,16 +11,18 @@ namespace MiniIMDBService.Services
     public class SearchIMDB : ServiceInterfaces.ISearchIMDB
     {
         private readonly DL.DBContext.NiceMoviesContext niceMoviesContext;
-        public SearchIMDB(DL.DBContext.NiceMoviesContext _NiceMoviesContext) {
+        public SearchIMDB(DL.DBContext.NiceMoviesContext _NiceMoviesContext)
+        {
             niceMoviesContext = _NiceMoviesContext;
         }
         private const string ExceptionQueryNullMsg = "Query can't be null!";
         private const string ExceptionQueryTooShortMsg = "Query can't be null!";
+        private const string ExceptionInvalidScoreMsg = "Score must be between 0 and 5!";
         public async Task<IEnumerable<TopContent>> GetByQuery(string query, bool contentType, int page = 0)
         {
             if (String.IsNullOrEmpty(query))
                 throw new ArgumentException(ExceptionQueryNullMsg);
-            if(query.Length < 2)
+            if (query.Length < 2)
                 throw new ArgumentException(ExceptionQueryTooShortMsg);
 
             query = query.ToLower();
@@ -58,7 +60,8 @@ namespace MiniIMDBService.Services
             {
                 upperYear -= Int32.Parse(query.Replace("older than ", "").Replace(" years", ""));
             }
-            else {
+            else
+            {
                 queryForSearch = query;
             }
 
@@ -83,9 +86,10 @@ namespace MiniIMDBService.Services
                         && e.Release.Year <= upperYear
                         )
                         && queryForSearch.Length == 0
-                    )).Skip(numOfResults*page).Take(numOfResults).OrderByDescending(e=>e.Score).ToList();
+                    )).Skip(numOfResults * page).Take(numOfResults).OrderByDescending(e => e.Score).ToList();
             }
-            else {
+            else
+            {
                 rezTVShows = niceMoviesContext.TV_Shows.Include(e => e.Casts).ThenInclude(e => e.Actor)
                     .Where(
                     e => (
@@ -106,7 +110,8 @@ namespace MiniIMDBService.Services
                     )).Skip(numOfResults * page).Take(numOfResults).OrderByDescending(e => e.Score).ToList();
             }
             var retVal = new List<TopContent>();
-            if (contentType){
+            if (contentType)
+            {
                 retVal = rezMovies.Select(e => new TopContent
                 {
                     Id = e.Id,
@@ -118,7 +123,8 @@ namespace MiniIMDBService.Services
                     Actors = e.Casts.Select(e => new ActorView { Name = e.Actor.Name, LastName = e.Actor.LastName }).ToList()
                 }).ToList();
             }
-            else {
+            else
+            {
                 retVal = rezTVShows.Select(e => new TopContent
                 {
                     Id = e.Id,
@@ -131,6 +137,24 @@ namespace MiniIMDBService.Services
                 }).ToList();
             }
             return retVal;
+        }
+        public async Task<bool> Vote(int id, float voteScore, bool contentType)
+        {
+            if(voteScore< 0 || voteScore > 5)
+                throw new ArgumentException(ExceptionInvalidScoreMsg);
+            if (contentType)
+            {
+                var movie = niceMoviesContext.Movies.Where(e => e.Id == id).FirstOrDefault();
+                movie.Score = (movie.Score * movie.NumberOfVotes + voteScore) / (movie.NumberOfVotes + 1);
+                movie.NumberOfVotes++;
+            }
+            else {
+                var movie = niceMoviesContext.TV_Shows.Where(e => e.Id == id).FirstOrDefault();
+                movie.Score = (movie.Score * movie.NumberOfVotes + voteScore) / (movie.NumberOfVotes + 1);
+                movie.NumberOfVotes++;
+            }
+            niceMoviesContext.SaveChanges();
+            return true;
         }
     }
 }

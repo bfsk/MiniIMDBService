@@ -8,5 +8,6 @@ namespace MiniIMDBService.Services.ServiceInterfaces
     public interface ISearchIMDB
     {
         Task<IEnumerable<DL.Data.Views.TopContent>> GetByQuery(string query, bool contentType, int page = 0);
+        Task<bool> Vote(int id, float voteScore, bool contentType);
     }
 }
