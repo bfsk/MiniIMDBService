@@ -19,19 +19,20 @@ namespace MiniIMDBService.DL.DBContext
 
         protected override void OnModelCreating(ModelBuilder modelBuilder) {
             modelBuilder.Entity<Cast>()
-                .HasKey(bc => new { bc.tvshow_id, bc.actor_id });
+                .HasKey(bc => new { bc.actor_id});
+            
             modelBuilder.Entity<Cast>()
-                .HasOne(bc => bc.TVShow)
+                .HasOne(bc => bc.Movie)
                 .WithMany(b => b.Casts)
-                .HasForeignKey(bc => bc.tvshow_id);
+                .HasForeignKey(bc => bc.movie_id);
             modelBuilder.Entity<Cast>()
                 .HasOne(bc => bc.Actor)
                 .WithMany(c => c.Casts)
                 .HasForeignKey(bc => bc.actor_id);
             modelBuilder.Entity<Cast>()
-                .HasOne(bc => bc.Movie)
+                .HasOne(bc => bc.TVShow)
                 .WithMany(b => b.Casts)
-                .HasForeignKey(bc => bc.movie_id);
+                .HasForeignKey(bc => bc.tvshow_id);
         }
     }
 }
