@@ -9,11 +9,11 @@ using MiniIMDBService.DL.Data.Views;
 namespace MiniIMDBService.Controllers
 {
     [ApiController]
-    [Route("IMDB")]
+    [Route("api/IMDB")]
     public class IMDBController : ControllerBase
     {
 
-
+        //
         private readonly IExceptionLogger logger;
         private readonly ISearchIMDB searchService;
 
