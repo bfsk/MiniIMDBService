@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[actors]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Name] NVARCHAR(50) NOT NULL, 
     [LastName] NVARCHAR(50) NOT NULL
 )

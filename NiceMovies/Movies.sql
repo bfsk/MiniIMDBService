@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[movies]
 (
-	[Id] INT NOT NULL PRIMARY KEY, 
+	[Id] INT NOT NULL PRIMARY KEY IDENTITY, 
     [Title] VARCHAR(50) NOT NULL, 
     [Release] SMALLDATETIME NOT NULL, 
     [Score] FLOAT NOT NULL, 
