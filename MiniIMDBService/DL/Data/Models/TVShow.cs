@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MiniIMDBService.DL.Data.Models
 {
-    public class Movie
+    public class TVShow
     {
         public int Id { get; set; }
         public string Title { get; set; }

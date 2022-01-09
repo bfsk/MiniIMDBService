@@ -5,5 +5,6 @@
     [Release] SMALLDATETIME NOT NULL, 
     [Score] FLOAT NOT NULL, 
     [NumberOfVotes] INT NOT NULL, 
-    [ImageLocation] NVARCHAR(50) NOT NULL
+    [ImageLocation] NVARCHAR(50) NOT NULL, 
+    [Description] NVARCHAR(MAX) NOT NULL
 )

@@ -10,6 +10,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
+using System.IO;
+using System.Reflection;
 
 namespace MiniIMDBService
 {
@@ -26,6 +30,16 @@ namespace MiniIMDBService
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+            services.AddDbContextPool<DL.DBContext.NiceMoviesContext>(options =>
+                options.UseSqlServer(Configuration.GetConnectionString("MoviesDB"))
+            );
+            //Call IoC
+            RegisterService(services);
+        }
+
+        private static void RegisterService(IServiceCollection services)
+        {
+            IoC.DependencyContainer.RegisterService(services);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -37,7 +51,6 @@ namespace MiniIMDBService
             }
 
             app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
@@ -46,6 +59,7 @@ namespace MiniIMDBService
             {
                 endpoints.MapControllers();
             });
+            
         }
     }
 }
